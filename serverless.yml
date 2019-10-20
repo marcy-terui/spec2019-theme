@@ -1,0 +1,97 @@
+service: jeffpay
+provider:
+  name: aws
+  runtime: python3.7
+  region: us-west-2
+  timeout: 30
+  environment:
+    TZ: Asia/Tokyo
+    USER_TABLE:
+      Ref: UserTable
+    WALLET_TABLE:
+      Ref: WalletTable
+    PAYMENT_HISTORY_TABLE:
+      Ref: PaymentHistoryTable
+    NOTIFICATION_ENDPOINT: 'https://vgz50x9c4h.execute-api.us-west-2.amazonaws.com/dev/notification'
+    LOCATION_ENDPOINT: 'https://vgz50x9c4h.execute-api.us-west-2.amazonaws.com/dev/location'
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - "dynamodb:*"
+      Resource:
+        - "*"
+
+functions:
+  CreateUser:
+    handler: handler.user_create
+    events:
+      - http:
+          path: users
+          method: post
+  WalletCharge:
+    handler: handler.wallet_charge
+    events:
+      - http:
+          path: wallet/charge
+          method: post
+  WalletUse:
+    handler: handler.wallet_use
+    events:
+      - http:
+          path: wallet/use
+          method: post
+  WalletTransfer:
+    handler: handler.wallet_transfer
+    events:
+      - http:
+          path: wallet/transfer
+          method: post
+  GetUserSummary:
+    handler: handler.get_user_summary
+    events:
+      - http:
+          path: users/{userId}/summary
+          method: get
+  GetPaymentHistory:
+    handler: handler.get_payment_history
+    events:
+      - http:
+          path: users/{userId}/history
+          method: get
+
+resources:
+  Resources:
+    UserTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+    WalletTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+    PaymentHistoryTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: walletId
+            AttributeType: S
+          - AttributeName: transactionId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: walletId
+            KeyType: HASH
+          - AttributeName: transactionId
+            KeyType: RANGE
