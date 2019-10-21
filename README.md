@@ -4,7 +4,7 @@ S.P.E.C. - Serverless Performance Empowerment Challenge
 # 課題アプリケーション
 電子マネー管理サービス
 
-# 導入
+# Introduction
 
 小売業界大手の `Jeff Stores` はキャッシュレス決済の波に乗り遅れまいと `JeffPay` をリリースすることを決定。  
 しかし、カード決済や既に流通している電子マネーの決済は既存のシステムの拡張で対応できるものの、独自電子マネーの管理機能だけは新規に作らなければならなかった・・・
