@@ -145,7 +145,6 @@ def wallet_transfer(event, context):
         ExpressionAttributeValues={
             ':transferAmount': body['transferAmount']
         },
-        ConditionExpression=boto3.dynamodb.conditions.Attr('amount').gte(body['transferAmount']),
         ReturnValues='ALL_NEW'
     )
     history_table.put_item(
