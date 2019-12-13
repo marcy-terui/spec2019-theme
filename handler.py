@@ -34,12 +34,6 @@ def wallet_charge(event, context):
         Key={
             'id': body['userId']
         },
-        AttributeUpdates={
-            'amount': {
-                'Value': body['chargeAmount'],
-                'Action': 'ADD'
-            }
-        },
         UpdateExpression='ADD amount :chargeAmount',
         ExpressionAttributeValues={
             ':chargeAmount': body['chargeAmount']
