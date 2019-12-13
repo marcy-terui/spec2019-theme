@@ -13,15 +13,14 @@ provider:
     PAYMENT_HISTORY_TABLE:
       Ref: PaymentHistoryTable
     NOTIFICATION_QUEUE:
-      Fn::GetAtt:
-        - NotificationQueue
-        - Arn
+      Ref: NotificationQueue
     NOTIFICATION_ENDPOINT: 'https://o5wb09mgpg.execute-api.ap-northeast-1.amazonaws.com/prod/notification'
     LOCATION_ENDPOINT: 'https://o5wb09mgpg.execute-api.ap-northeast-1.amazonaws.com/prod/location'
   iamRoleStatements:
     - Effect: Allow
       Action:
         - "dynamodb:*"
+        - "sqs:*"
       Resource:
         - "*"
 
@@ -109,4 +108,4 @@ resources:
             - AttributeName: "timestamp"
               KeyType: "RANGE"
           Projection: 
-            ProjectionType: "KEYS_ONLY"
+            ProjectionType: "ALL"
