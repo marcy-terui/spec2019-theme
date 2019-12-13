@@ -87,7 +87,7 @@ def wallet_use(event, context):
             ReturnValues='ALL_NEW'
         )
     except botocore.exceptions.ClientError as e:
-        if e.response['Error']['Code'] != 'ConditionalCheckFailedException':
+        if e.response['Error']['Code'] == 'ConditionalCheckFailedException':
             return {
                 'statusCode': 400,
                 'body': json.dumps({'errorMessage': 'There was not enough money.'})
@@ -137,7 +137,7 @@ def wallet_transfer(event, context):
             ReturnValues='ALL_NEW'
         )
     except botocore.exceptions.ClientError as e:
-        if e.response['Error']['Code'] != 'ConditionalCheckFailedException':
+        if e.response['Error']['Code'] == 'ConditionalCheckFailedException':
             return {
                 'statusCode': 400,
                 'body': json.dumps({'errorMessage': 'There was not enough money.'})
