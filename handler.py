@@ -40,6 +40,10 @@ def wallet_charge(event, context):
                 'Action': 'ADD'
             }
         },
+        UpdateExpression='ADD amount :chargeAmount',
+        ExpressionAttributeValues={
+            ':chargeAmount': body['chargeAmount']
+        },
         ReturnValues='ALL_NEW'
     )
     history_table.put_item(
@@ -77,11 +81,9 @@ def wallet_use(event, context):
             Key={
                 'id': body['userId']
             },
-            AttributeUpdates={
-                'amount': {
-                    'Value': body['useAmount'] * -1,
-                    'Action': 'ADD'
-                }
+            UpdateExpression='ADD amount :useAmount',
+            ExpressionAttributeValues={
+                ':useAmount': body['useAmount'] * -1
             },
             ConditionExpression=boto3.dynamodb.conditions.Attr('amount').gte(body['useAmount']),
             ReturnValues='ALL_NEW'
@@ -128,12 +130,11 @@ def wallet_transfer(event, context):
             Key={
                 'id': body['fromUserId']
             },
-            AttributeUpdates={
-                'amount': {
-                    'Value': body['transferAmount'] * -1,
-                    'Action': 'ADD'
-                }
+            UpdateExpression='ADD amount :transferAmount',
+            ExpressionAttributeValues={
+                ':transferAmount': body['transferAmount'] * -1
             },
+            ConditionExpression=boto3.dynamodb.conditions.Attr('amount').gte(body['transferAmount']),
             ReturnValues='ALL_NEW'
         )
     except botocore.exceptions.ClientError as e:
@@ -146,12 +147,11 @@ def wallet_transfer(event, context):
         Key={
             'id': body['toUserId']
         },
-        AttributeUpdates={
-            'amount': {
-                'Value': body['transferAmount'],
-                'Action': 'ADD'
-            }
+        UpdateExpression='ADD amount :transferAmount',
+        ExpressionAttributeValues={
+            ':transferAmount': body['transferAmount']
         },
+        ConditionExpression=boto3.dynamodb.conditions.Attr('amount').gte(body['transferAmount']),
         ReturnValues='ALL_NEW'
     )
     history_table.put_item(
